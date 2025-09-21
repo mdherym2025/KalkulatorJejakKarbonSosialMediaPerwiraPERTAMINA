@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalkulator Jejak Karbon Sosial Media Perwira Pertamina</title>
+  <style>
+    /* Warna khas Pertamina */
+    :root {
+      --biru-pertamina: #004080;
+      --merah-pertamina: #d32f2f;
+      --hijau-pertamina: #388e3c;
+      --abu-pertamina: #f0f4f8;
+      --abu-tua: #333333;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 2rem;
+      background-color: var(--abu-pertamina);
+      color: var(--abu-tua);
+      line-height: 1.6;
+    }
+    h1 {
+      color: var(--biru-pertamina);
+      border-left: 6px solid var(--merah-pertamina);
+      padding-left: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    label {
+      display: block;
+      margin-top: 1.2rem;
+      font-weight: 600;
+      color: var(--biru-pertamina);
+    }
+    input, select, button {
+      margin-top: 0.5rem;
+      padding: 0.6rem;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 320px;
+      box-sizing: border-box;
+      border: 2px solid var(--biru-pertamina);
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--hijau-pertamina);
+      box-shadow: 0 0 5px var(--hijau-pertamina);
+    }
+    button {
+      background-color: var(--merah-pertamina);
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 1.8rem;
+      font-weight: 700;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+      max-width: 320px;
+    }
+    button:hover {
+      background-color: #a52727; /* merah lebih gelap */
+    }
+    .result {
+      margin-top: 2rem;
+      padding: 1.2rem;
+      background-color: #e8f5e9; /* hijau muda */
+      border: 2px solid var(--hijau-pertamina);
+      max-width: 360px;
+      border-radius: 6px;
+      color: var(--hijau-pertamina);
+      box-shadow: 0 2px 6px rgba(56, 142, 60, 0.3);
+    }
+    .footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: var(--abu-tua);
+      max-width: 600px;
+    }
+    #chartContainer {
+      max-width: 600px;
+      margin-top: 2rem;
+    }
+    .tips {
+      background-color: #fff3e0; /* oranye muda */
+      border-left: 6px solid var(--merah-pertamina);
+      padding: 1rem 1.2rem;
+      margin-top: 2rem;
+      max-width: 600px;
+      border-radius: 6px;
+      color: var(--merah-pertamina);
+      font-weight: 600;
+    }
+    .tips ul {
+      margin-top: 0.5rem;
+      padding-left: 1.2rem;
+      color: #5d4037; /* coklat gelap */
+      font-weight: 400;
+    }
+    .contact {
+      margin-top: 3rem;
+      font-size: 0.95rem;
+      color: var(--biru-pertamina);
+      max-width: 600px;
+      font-weight: 600;
+    }
+    .contact a {
+      color: var(--merah-pertamina);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .contact a:hover {
+      text-decoration: underline;
+    }
+    .explanation {
+      background-color: #e3f2fd; /* biru muda */
+      border-left: 6px solid var(--biru-pertamina);
+      padding: 1rem 1.2rem;
+      margin-top: 3rem;
+      max-width: 700px;
+      border-radius: 6px;
+      color: var(--biru-pertamina);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .explanation h2 {
+      margin-top: 0;
+      font-weight: 700;
+    }
+    .explanation p, .explanation ul {
+      margin-top: 0.5rem;
+      font-weight: 400;
+      color: #1a237e;
+    }
+    .explanation ul {
+      padding-left: 1.2rem;
+    }
+    /* Responsive */
+    @media (max-width: 480px) {
+      body {
+        margin: 1rem;
+      }
+      input, select, button, .result, .explanation {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Kalkulator Jejak Karbon Sosial Media Perwira PERTAMINA</h1>
+  <p>Hitung estimasi emisi karbon dari penggunaan media sosial Anda setiap hari.</p>
+
+  <form id="carbonForm">
+    <label for="media">Pilih Media Sosial:</label>
+    <select id="media" required>
+      <option value="" disabled selected>-- Pilih Media Sosial --</option>
+      <option value="facebook">Facebook</option>
+      <option value="whatsapp">WhatsApp</option>
+      <option value="instagram">Instagram</option>
+      <option value="youtube">YouTube</option>
+    </select>
+
+    <label for="duration">Durasi Penggunaan per Hari (menit):</label>
+    <input type="number" id="duration" min="1" max="1440" required placeholder="Misal: 120" />
+
+    <button type="submit">Hitung Jejak Karbon</button>
+  </form>
+
+  <div class="result" id="result" style="display:none;"></div>
+
+  <div id="chartContainer" style="display:none;">
+    <canvas id="emissionChart"></canvas>
+  </div>
+
+  <div class="tips" id="tips" style="display:none;">
+    <h2>Tips Mengurangi Jejak Karbon Digital Anda</h2>
+    <ul>
+      <li>Batasi durasi penggunaan media sosial setiap hari.</li>
+      <li>Matikan fitur autoplay video untuk mengurangi konsumsi data.</li>
+      <li>Gunakan Wi-Fi daripada data seluler saat mengakses internet.</li>
+      <li>Kurangi pengiriman file besar dan video yang tidak perlu.</li>
+      <li>Matikan perangkat saat tidak digunakan untuk menghemat energi.</li>
+    </ul>
+  </div>
+
+  <div class="contact">
+    <h2>Kontak</h2>
+    <p>Jika Anda memiliki pertanyaan atau masukan, silakan hubungi: <a href="mailto:mdherym@yandex.ru">mdherym@yandex.ru</a></p> & <a href="mailto:muhammad.mahendra@internship.pertamina.com">muhammad.mahendra@internship.pertamina.com</a></p>
+  </div>
+
+  <div class="explanation">
+    <h2>Penjelasan Cara Menghitung Jejak Karbon</h2>
+    <p>Kalkulator ini memperkirakan emisi karbon (CO₂) yang dihasilkan dari penggunaan media sosial berdasarkan durasi waktu yang Anda habiskan setiap hari. Setiap menit penggunaan media sosial menghasilkan sejumlah emisi karbon yang berasal dari:</p>
+    <ul>
+      <li>Energi yang digunakan oleh pusat data (data center) untuk memproses dan menyimpan data.</li>
+      <li>Energi yang digunakan oleh jaringan internet untuk mengirimkan data.</li>
+      <li>Energi yang digunakan oleh perangkat Anda (smartphone, komputer) saat mengakses media sosial.</li>
+    </ul>
+    <p>Estimasi emisi karbon per menit untuk masing-masing media sosial didasarkan pada studi dan laporan riset dari sumber terpercaya, seperti:</p>
+    <ul>
+      <li>Studi oleh Shift Project (2020) tentang dampak karbon dari streaming video dan penggunaan internet.</li>
+      <li>Laporan dari International Energy Agency (IEA) mengenai konsumsi energi pusat data dan jaringan.</li>
+      <li>Data emisi karbon rata-rata per kWh listrik di Indonesia yang digunakan untuk mengkonversi konsumsi energi menjadi emisi CO₂.</li>
+    </ul>
+    <p>Perlu diingat bahwa nilai ini adalah estimasi rata-rata dan dapat bervariasi tergantung pada efisiensi jaringan, jenis perangkat, dan sumber energi yang digunakan.</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Catatan:</strong> Estimasi ini berdasarkan rata-rata emisi karbon per menit penggunaan media sosial.</p>
+    <p>Dikembangkan khusus untuk Perwira Pertamina.</p>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const emisiPerMenit = {
+      facebook: 0.2,
+      whatsapp: 0.1,
+      instagram: 0.25,
+      youtube: 0.5
+    };
+
+    let chartInstance = null;
+
+    document.getElementById('carbonForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const media = document.getElementById('media').value;
+      const duration = parseInt(document.getElementById('duration').value);
+
+      if (!media || isNaN(duration) || duration <= 0) {
+        alert('Mohon isi semua data dengan benar.');
+        return;
+      }
+
+      const emisi = emisiPerMenit[media] * duration; // gram CO2 per hari
+      const emisiBulan = emisi * 30;
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = `
+        <h2>Hasil Perhitungan</h2>
+        <p>Penggunaan <strong>${media.charAt(0).toUpperCase() + media.slice(1)}</strong> selama <strong>${duration} menit</strong> menghasilkan estimasi emisi karbon sebesar:</p>
+        <p style="font-size:1.5rem; font-weight:bold; color: var(--hijau-pertamina);">${emisi.toFixed(2)} gram CO₂ per hari</p>
+        <p>Jika digunakan setiap hari selama sebulan, total emisi sekitar <strong>${emisiBulan.toFixed(2)} gram CO₂</strong>.</p>
+      `;
+
+      // Tampilkan grafik
+      const chartContainer = document.getElementById('chartContainer');
+      chartContainer.style.display = 'block';
+
+      const ctx = document.getElementById('emissionChart').getContext('2d');
+
+      // Hapus chart lama jika ada
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Per Hari', 'Per Bulan (30 hari)'],
+          datasets: [{
+            label: 'Emisi CO₂ (gram)',
+            data: [emisi.toFixed(2), emisiBulan.toFixed(2)],
+            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--biru-pertamina').trim(), getComputedStyle(document.documentElement).getPropertyValue('--hijau-pertamina').trim()]
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+
+      // Tampilkan tips
+      document.getElementById('tips').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
